@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crear cuenta | Touskan</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+
+    <link rel="stylesheet"
+          href="style/registro.css">
+
+</head>
+
+
+<body>
+<a href="index.html" class="btn-volver">
+        <i class="bi bi-arrow-left"></i>
+        Volver
+    </a>
+
+
+
+
+    <div class="container">
+
+
+        <!-- =========================
+             PRESENTACIÓN
+        ========================== -->
+
+        <div class="left">
+
+            <div class="logo">
+                Touskan
+            </div>
+
+            <h1>
+                Crea tu cuenta
+            </h1>
+
+            <p>
+                Regístrate para disfrutar de nuestros productos,
+                realizar pedidos y acceder a todas las funciones
+                de Touskan.
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             FORMULARIO
+        ========================== -->
+
+        <div class="right">
+
+            <h2>
+                Crear cuenta
+            </h2>
+
+            <p class="subtitle">
+                Completa tus datos para registrarte
+            </p>
+
+
+            <form id="registroForm">
+
+
+                <!-- NOMBRE -->
+
+                <div class="input-group">
+
+                    <label for="nombre">
+                        Nombre completo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Ej: Allan Contreras"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CORREO -->
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="correo@ejemplo.com"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CONTRASEÑA -->
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Mínimo 8 caracteres"
+                        required
+                        minlength="8"
+                    >
+
+                </div>
+
+
+
+                <!-- CONFIRMAR CONTRASEÑA -->
+
+                <div class="input-group">
+
+                    <label for="confirmPassword">
+                        Confirmar contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Repite tu contraseña"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- TÉRMINOS -->
+
+                <div class="terms">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="terminos"
+                            required
+                        >
+
+                        Acepto los términos y condiciones
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- BOTÓN -->
+
+                <button
+                    type="submit"
+                    class="btn">
+
+                    Crear cuenta
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- SEPARADOR -->
+
+            <div class="divider">
+
+                <span>
+                    O
+                </span>
+
+            </div>
+
+
+
+            <!-- GOOGLE -->
+
+            <button
+                type="button"
+                class="google"
+                id="googleBtn">
+
+                <span class="google-icon">
+                    G
+                </span>
+
+                Continuar con Google
+
+            </button>
+
+
+
+            <!-- LOGIN -->
+
+            <div class="login">
+
+                ¿Ya tienes una cuenta?
+
+                <a href="inicio.html">
+                    Iniciar sesión
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        // DEMO: la cuenta se guarda solo en este navegador.
+        // Para producción se necesita un servidor con contraseñas cifradas.
+        async function hashPassword(texto) {
+
+            if (!window.crypto || !crypto.subtle) {
+                throw new Error("Este navegador no permite cifrar la contraseña.");
+            }
+
+            const datos = new TextEncoder().encode(texto);
+            const hash = await crypto.subtle.digest("SHA-256", datos);
+
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("");
+
+        }
+
+        document
+            .getElementById("registroForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const nombre = document.getElementById("nombre").value.trim();
+                const email = document.getElementById("email").value.trim().toLowerCase();
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+                const terminos = document.getElementById("terminos").checked;
+
+                if (password.length < 6) {
+                    alert("La contraseña debe tener al menos 6 caracteres.");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert("Las contraseñas no coinciden.");
+                    return;
+                }
+
+                if (!terminos) {
+                    alert("Debes aceptar los términos y condiciones.");
+                    return;
+                }
+
+                try {
+
+                    const usuario = {
+                        nombre: nombre,
+                        email: email,
+                        hash: await hashPassword(password)
+                    };
+
+                    localStorage.setItem("usuarioTouskan", JSON.stringify(usuario));
+
+                    alert("¡Cuenta creada correctamente!");
+
+                    window.location.href = "inicio.html";
+
+                } catch (error) {
+
+                    alert(error.message);
+
+                }
+
+            });
+
+        document
+            .getElementById("googleBtn")
+            .addEventListener("click", function () {
+                alert("El inicio de sesión con Google estará disponible pronto.");
+            });
+
+    </script>
+
+</body>
+
+</html>
